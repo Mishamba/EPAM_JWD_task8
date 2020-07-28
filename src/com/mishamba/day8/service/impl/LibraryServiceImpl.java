@@ -1,13 +1,14 @@
 package com.mishamba.day8.service.impl;
 
 import com.mishamba.day8.dao.exception.DaoException;
-import com.mishamba.day8.dao.impl.LibraryDaoImpl;
+import com.mishamba.day8.dao.impl.LibraryDAOImpl;
 import com.mishamba.day8.model.entity.CustomBook;
 import com.mishamba.day8.model.exception.ModelException;
 import com.mishamba.day8.service.LibraryService;
 import com.mishamba.day8.service.exception.ServiceException;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -28,12 +29,11 @@ public class LibraryServiceImpl implements LibraryService {
 
     public void addBook(@NotNull String title, int pages,
                         ArrayList<String> authors) throws ServiceException {
-        LibraryDaoImpl dataAccessObject =
-                new LibraryDaoImpl();
+        LibraryDAOImpl dataAccessObject = LibraryDAOImpl.getInstance();
         try {
             CustomBook book = CustomBook.Creator.create(title, pages, authors);
             dataAccessObject.addBook(book);
-        } catch (ModelException | DaoException ex) {
+        } catch (SQLException | ModelException ex) {
             throw new ServiceException("can't add book", ex);
         }
     }
@@ -42,12 +42,11 @@ public class LibraryServiceImpl implements LibraryService {
     public void removeBook(@NotNull String title,
                            int pages, ArrayList<String> authors)
             throws ServiceException {
-        LibraryDaoImpl dataAccessObject =
-                new LibraryDaoImpl();
+        LibraryDAOImpl dataAccessObject = LibraryDAOImpl.getInstance();
         try {
             CustomBook book = CustomBook.Creator.create(title, pages, authors);
             dataAccessObject.removeBook(book);
-        } catch (DaoException | ModelException ex) {
+        } catch (SQLException | ModelException ex) {
             throw new ServiceException("can't remove book", ex);
         }
     }
@@ -55,41 +54,50 @@ public class LibraryServiceImpl implements LibraryService {
     @Override
     public ArrayList<CustomBook> findByTitle(@NotNull String title)
             throws ServiceException {
-        LibraryDaoImpl dataAccessObject =
-                new LibraryDaoImpl();
-        ArrayList<CustomBook> books = dataAccessObject.findByTitle(title);
-        if (books.isEmpty()) {
-            throw new ServiceException("no book with such title : " + title);
-        }
+        try {
+            LibraryDAOImpl dataAccessObject = LibraryDAOImpl.getInstance();
+            ArrayList<CustomBook> books = dataAccessObject.findByTitle(title);
+            if (books.isEmpty()) {
+                throw new ServiceException("no book with such title : " + title);
+            }
 
-        return books;
+            return books;
+        } catch (SQLException ex) {
+            throw new ServiceException(ex);
+        }
     }
 
     @Override
     public ArrayList<CustomBook> findByAuthors(@NotNull String[] authors)
             throws ServiceException {
-        LibraryDaoImpl dataAccessObject =
-                new LibraryDaoImpl();
-        ArrayList<CustomBook> books = dataAccessObject.findByAuthors(authors);
-        if (books.isEmpty()) {
-            throw new ServiceException("no book with this authors : " +
-                    Arrays.toString(authors));
-        }
+        try {
+            LibraryDAOImpl dataAccessObject = LibraryDAOImpl.getInstance();
+            ArrayList<CustomBook> books = dataAccessObject.findByAuthors(authors);
+            if (books.isEmpty()) {
+                throw new ServiceException("no book with this authors : " +
+                        Arrays.toString(authors));
+            }
 
-        return books;
+            return books;
+        } catch (SQLException ex) {
+            throw new ServiceException(ex);
+        }
     }
 
     @Override
     public ArrayList<CustomBook> findByPages(int pages) throws ServiceException {
-        LibraryDaoImpl dataAccessObject =
-                new LibraryDaoImpl();
-        ArrayList<CustomBook> books = dataAccessObject.findByPages(pages);
-        if (books.isEmpty()) {
-            throw new ServiceException("no book with this count of pages : " +
-                    pages);
-        }
+        try {
+            LibraryDAOImpl dataAccessObject = LibraryDAOImpl.getInstance();
+            ArrayList<CustomBook> books = dataAccessObject.findByPages(pages);
+            if (books.isEmpty()) {
+                throw new ServiceException("no book with this count of pages : " +
+                        pages);
+            }
 
-        return books;
+            return books;
+        } catch (SQLException ex) {
+            throw new ServiceException(ex);
+        }
     }
 
     @Override
@@ -115,26 +123,32 @@ public class LibraryServiceImpl implements LibraryService {
 
     private @NotNull ArrayList<CustomBook> sortBy(Comparator comparator)
             throws ServiceException {
-        LibraryDaoImpl dataAccessObject =
-                new LibraryDaoImpl();
-        ArrayList<CustomBook> books = dataAccessObject.selectAllBooks();
-        if (books.isEmpty()) {
-            throw new ServiceException("no books found");
+        try {
+            LibraryDAOImpl dataAccessObject = LibraryDAOImpl.getInstance();
+            ArrayList<CustomBook> books = dataAccessObject.selectAllBooks();
+            if (books.isEmpty()) {
+                throw new ServiceException("no books found");
+            }
+            books.sort(comparator);
+            return books;
+        } catch (SQLException ex) {
+            throw new ServiceException(ex);
         }
-        books.sort(comparator);
-        return books;
     }
 
     @Override
     public ArrayList<CustomBook> selectAllBooks() throws ServiceException {
-        LibraryDaoImpl dataAccessObject =
-                new LibraryDaoImpl();
+        LibraryDAOImpl dataAccessObject = LibraryDAOImpl.getInstance();
 
-        ArrayList<CustomBook> books = dataAccessObject.selectAllBooks();
-        if (books.isEmpty()) {
-            throw new ServiceException("no books found");
+        try {
+            ArrayList<CustomBook> books = dataAccessObject.selectAllBooks();
+            if (books.isEmpty()) {
+                throw new ServiceException("no books found");
+            }
+            return books;
+        } catch (SQLException ex) {
+            throw new ServiceException(ex);
         }
-        return books;
     }
 }
 

@@ -10,14 +10,23 @@ import java.util.ArrayList;
 
 public class CustomBook {
     private int id;
-    private final String title;
-    private final ArrayList<String> authors;
-    private final int pages;
+    private String title;
+    private ArrayList<String> authors;
+    private int pages;
 
     public CustomBook(String title, int pages, ArrayList<String> authors) {
         this.title = title;
         this.pages = pages;
         this.authors = authors;
+    }
+
+    public CustomBook(String title, int pages) {
+        this.title = title;
+        this.pages = pages;
+        this.authors = new ArrayList<>();
+    }
+
+    public CustomBook() {
     }
 
     public int getId() {
@@ -38,6 +47,21 @@ public class CustomBook {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setAuthors(@NotNull ArrayList<String> authors) {
+        this.authors = new ArrayList<>();
+        for (String author : authors) {
+            authors.add(author);
+        }
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setPages(int pages) {
+        this.pages = pages;
     }
 
     public static class Creator {
