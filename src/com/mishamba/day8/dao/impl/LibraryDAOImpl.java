@@ -89,7 +89,7 @@ public class LibraryDAOImpl implements LibraryDAO {
     private @NotNull ArrayList<CustomBook> getBooksFromDB(CustomBook book)
             throws SQLException {
         try {
-            Class.forName("");
+            Class.forName("org.postgres.Driver");
         } catch (ClassNotFoundException e) {
             logger.error(e);
         }
@@ -155,7 +155,7 @@ public class LibraryDAOImpl implements LibraryDAO {
 
     private @NotNull ArrayList<CustomBook> getBooksFromDB(String sql) throws SQLException {
         try {
-            Class.forName("");
+            Class.forName("org.postgres.Driver");
         } catch (ClassNotFoundException e) {
             logger.error(e);
         }
